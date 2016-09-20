@@ -1,0 +1,52 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "webAppName": {
+      "type": "string"
+    },
+    "googleApiKey": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "serverFarmName": "schdo",
+    "appServicePlanResourceGroupName": "schdo"
+  },
+  "resources": [    
+    {
+      "name": "[parameters('webAppName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-08-01",
+      "dependsOn": [       
+      ],
+      "tags": {
+        "displayName": "[parameters('webAppName')]"
+      },
+      "properties": {
+        "name": "[parameters('webAppName')]",
+        "serverFarmId": "[resourceId(variables('appServicePlanResourceGroupName'), 'Microsoft.Web/serverfarms/', variables('serverFarmName'))]",
+        "siteConfig": {
+          "AlwaysOn": true
+        }
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "name": "appsettings",
+          "type": "config",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', parameters('webAppName'))]"
+          ],
+          "properties": {
+            "GoogleApiKey": "[parameters('googleApiKey')]"
+          }
+        }
+      ]
+    }
+  
+  ],
+  "outputs": {  
+  }
+}
